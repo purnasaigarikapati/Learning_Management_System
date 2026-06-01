@@ -128,3 +128,28 @@ def register(request):
             },
             status=500
         )
+
+@api_view(['GET'])
+@is_authenticated
+def profile(request):
+    return Response({
+        "id": request.user.user_id,
+        "name": request.user.name,
+        "email": request.user.email,
+        "phone": request.user.phone,
+        "role": request.user.role
+    })
+
+@api_view(['PUT'])
+@is_authenticated
+def update_profile(request):
+    request.user.phone = request.data['phone']
+    request.user.save()
+    return Response({'message': 'Profile Updated'})
+
+@api_view(['DELETE'])
+@is_authenticated
+def delete_profile(request):
+    user = User.objects.get(user_id=request.user.user_id)
+    user.delete()
+    return Response({'message': 'User Deleted'})
